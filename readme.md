@@ -30,7 +30,7 @@ The `endritvs/user-logs` package offers a robust solution to effortlessly track 
     ];
     ```
 
-    Now, you can use the `track.user.log` middleware in your routes file to apply it to individual routes or groups of routes:
+    Now, you can use the `track.user.log` middleware in your routes file to apply it to individual routes or groups of routes and it will log all routes that user has accessed:
     ```php
     Route::middleware('track.user.log')->group(function () {
         // ... your routes ...
@@ -47,9 +47,9 @@ The `endritvs/user-logs` package offers a robust solution to effortlessly track 
     ]
     ```
 
-4. **Usage**
+4. **More Usage if you need - Optional**
 
-    Use Laravel's native logging system to log user activities:
+    You can use also Laravel's native logging system to log user activities for:
     ```php
     Log::channel('user_logs')->info('User performed a specific action.');
     ```
