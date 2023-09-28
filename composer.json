@@ -24,5 +24,6 @@
                 "Endritvs\\UserLogs\\UserLogsServiceProvider"
             ]
         }
-    }
+    },
+    "keywords": ["laravel", "logging", "user", "tracking"]
 }

@@ -3,12 +3,13 @@
 namespace Endritvs\UserLogs;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Contracts\Http\Kernel;
 
 class UserLogsServiceProvider extends ServiceProvider
 {
-    public function boot()
+    public function boot(Kernel $kernel)
     {
-        // Services that are only needed when the package is booting.
+        $kernel->pushMiddleware(\Endritvs\UserLogs\Middleware\TrackUserLogMiddleware::class);
     }
 
     public function register()
