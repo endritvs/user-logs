@@ -17,12 +17,29 @@ The `endritvs/user-logs` package offers a robust solution to effortlessly track 
 
     Install via Composer:
     ```bash
-    composer require endritvs/user-logs
+    composer require endritvs/user-logs:^dev-main
     ```
 
-2. **Configure**
+2. **Configure Middleware**
 
-    Post-installation, register the custom logging channel in `config/logging.php`:
+    Register the middleware in your application. First, add it to the `$routeMiddleware` property of your `app/Http/Kernel.php` file:
+    ```php
+    protected $routeMiddleware = [
+        // ... other middleware ...
+        'track.user.log' => \Endritvs\UserLogs\Middleware\TrackUserLogMiddleware::class,
+    ];
+    ```
+
+    Now, you can use the `track.user.log` middleware in your routes file to apply it to individual routes or groups of routes:
+    ```php
+    Route::middleware('track.user.log')->group(function () {
+        // ... your routes ...
+    });
+    ```
+
+3. **Configure Logging Channel**
+
+    Register the custom logging channel in `config/logging.php`:
     ```php
     'user_logs' => [
         'driver' => 'custom',
@@ -30,7 +47,7 @@ The `endritvs/user-logs` package offers a robust solution to effortlessly track 
     ]
     ```
 
-3. **Usage**
+4. **Usage**
 
     Use Laravel's native logging system to log user activities:
     ```php
