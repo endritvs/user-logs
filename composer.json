@@ -18,12 +18,5 @@
             "Endritvs\\UserLogs\\": "src/"
         }
     },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Endritvs\\UserLogs\\UserLogsServiceProvider"
-            ]
-        }
-    },
     "keywords": ["laravel", "logging", "user", "tracking"]
 }
