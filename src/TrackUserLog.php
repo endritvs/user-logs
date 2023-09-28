@@ -8,28 +8,55 @@ use Monolog\Formatter\LineFormatter;
 
 class TrackUserLog
 {
-    public function __invoke(array $config)
+    public function __invoke()
     {
-        $logger = new Logger('user_logs');
+        $method = $this->getMethodName();
+        $controllerName = $this->getControllerName();
+        $user = Auth::user();
 
-        if (Auth::check())
-        {
-            $user = Auth::user();
-            $method = request()->route()->getActionMethod();
+        $logPath = self::getLogPath($user, $controllerName, $method);
+        $logger = self::configureLogger($logPath);
 
-            $routeAction = request()->route()->getAction('controller');
-            [$controllerNamespace, $controllerMethod] = explode('@', $routeAction);
-            $controllerName = class_basename($controllerNamespace);
-
-            $dateFormat = 'Y-m-d H:i:s';
-            $logPath = storage_path("logs/user_logs/{$user->id}/{$controllerName}_{$method}.log");
-            $userLogHandler = new StreamHandler($logPath);
-            $userLogHandler->setFormatter(new LineFormatter(null, $dateFormat, true, true));
-
-            $logger->pushHandler($userLogHandler);
-            $logger->info("User {$user->id} {$user->name} {$user->email} accessed method {$method} in controller {$controllerName}");
-        }
+        self::logUserAccess($logger, $user, $controllerName, $method);
 
         return $logger;
+    }
+
+    protected static function getMethodName()
+    {
+        return request()->route()->getActionMethod();
+    }
+
+    protected static function getControllerName()
+    {
+        $routeAction = request()->route()->getAction('controller');
+        [$controllerNamespace] = explode('@', $routeAction);
+        return class_basename($controllerNamespace);
+    }
+
+    protected static function getLogPath($user, $controllerName, $method)
+    {
+        $logDirectory = Auth::check() ? $user->id : 'all';
+        $date = now()->format('Y_m_d');
+        return storage_path("logs/user_logs/{$logDirectory}/{$controllerName}_{$method}_{$date}.log");
+    }
+
+    protected static function configureLogger($logPath)
+    {
+        $logger = new Logger('user_logs');
+        $dateFormat = 'Y-m-d H:i:s';
+        $handler = new StreamHandler($logPath);
+        $handler->setFormatter(new LineFormatter(null, $dateFormat, true, true));
+        $logger->pushHandler($handler);
+        return $logger;
+    }
+
+    protected static function logUserAccess($logger, $user, $controllerName, $method)
+    {
+        if (Auth::check()) {
+            $logger->info("User {$user->id} {$user->name} {$user->email} accessed method {$method} in controller {$controllerName}");
+        } else {
+            $logger->info("User accessed method {$method} in controller {$controllerName}");
+        }
     }
 }
