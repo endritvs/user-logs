@@ -10,8 +10,8 @@ class TrackUserLog
 {
     public function __invoke()
     {
-        $method = $this->getMethodName();
-        $controllerName = $this->getControllerName();
+        $method = self::getMethodName();
+        $controllerName = self::getControllerName();
         $user = Auth::user();
 
         $logPath = self::getLogPath($user, $controllerName, $method);
